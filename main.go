@@ -41,13 +41,7 @@ func main() {
 
 	grayImage := ic.ConvertToGray(img)
 
-	outfilename := "result.png"
-	outfile, err := os.Create(outfilename)
-	if err != nil {
-		panic(err.Error())
-	}
-	defer outfile.Close()
-	png.Encode(outfile, grayImage)
+	saveImage("result.png", grayImage)
 
 	//the image bounds
 	bounds := grayImage.Bounds()
