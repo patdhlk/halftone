@@ -38,3 +38,11 @@ func (w *ImageWorker) GetImageDemensions(image image.Image) (int, int) {
 	height := bounds.Max.Y
 	return width, height
 }
+
+func (w *ImageWorker) SaveImage(path string, i image.Image) {
+	file, _ := os.Create(path)
+	if err := png.Encode(file, i); err != nil {
+		log.Println("Error writing image on disk")
+		os.Exit(1)
+	}
+}

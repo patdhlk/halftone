@@ -41,7 +41,7 @@ func main() {
 
 	grayImage := ic.ConvertToGray(img)
 
-	saveImage("result.png", grayImage)
+	worker.SaveImage("result.png", grayImage)
 
 	//the image bounds
 	bounds := grayImage.Bounds()
@@ -95,7 +95,7 @@ func main() {
 		}
 	}
 
-	saveImage("sequential.png", dst)
+	worker.SaveImage("sequential.png", dst)
 }
 
 func CalculateGray(red, green, blue uint32) uint32 {
