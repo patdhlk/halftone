@@ -6,6 +6,7 @@ import (
 	"image/color"
 	"image/png"
 	"log"
+	"math"
 	"os"
 	"runtime"
 )
@@ -15,7 +16,7 @@ var pal = color.Palette{
 	color.White,
 }
 
-var DitherArray [][]uint32
+var DitherArray [][]uint8
 
 func main() {
 	//USING ALL CORES OF YOUR MACHINE FOR PARALLEL PROCESSING
@@ -54,28 +55,25 @@ func main() {
 
 	//create 2D array
 
-	DitherArray = make([][]uint32, w)
+	DitherArray = make([][]uint8, w)
 	for i := 0; i < w; i++ {
-		DitherArray[i] = make([]uint32, h)
+		DitherArray[i] = make([]uint8, h)
 	}
 
 	//http://dotnet-snippets.de/snippet/floyd-steinberg-dithering/94
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
 			//use colored image
-			pixel := img.At(y, x)
+			pixel := img.At(x, y)
 			//use gray image
 			//pixel := img.At(y, x)
 			red, green, blue, _ := pixel.RGBA()
-			gray := CalculateGray(red, green, blue)
-
-			DitherArray[x][y] = gray
-		}
-	}
-
-	for x := 1; x < h-1; x++ {
-		for y := 1; y < w-1; y++ {
-			CalculateDithering(x, y)
+			red2 := uint8(red)
+			green2 := uint8(green)
+			blue2 := uint8(blue)
+			gray := CalculateGray(red2, green2, blue2)
+			gray_ := uint8(gray)
+			DitherArray[x][y] = gray_
 		}
 	}
 
@@ -83,14 +81,32 @@ func main() {
 		for x := 0; x < w; x++ {
 			//pixel := grayImage.At(y, x)
 			temp := DitherArray[x][y]
+
+			c := color.RGBA{temp, temp, temp, 0xff}
+			dst.SetRGBA(x, y, c)
+		}
+	}
+
+	worker.SaveImage("result2.png", dst)
+
+	for x := 1; x < w-1; x++ {
+		for y := 1; y < h-1; y++ {
+			CalculateDithering(x, y)
+		}
+	}
+
+	for y := 0; y < h; y++ {
+		for x := 0; x < w; x++ {
+
+			//pixel := grayImage.At(y, x)
+			temp := DitherArray[x][y]
 			if temp == 0 {
-				temp = 0
+				temp = math.MaxUint8
 			} else {
-				temp = 255
+				temp = 0
 			}
-			tem := uint8(temp)
-			log.Println(tem)
-			c := color.RGBA{tem, tem, tem, 0xff}
+
+			c := color.RGBA{temp, temp, temp, 0xff}
 			dst.SetRGBA(x, y, c)
 		}
 	}
@@ -98,25 +114,27 @@ func main() {
 	worker.SaveImage("sequential.png", dst)
 }
 
-func CalculateGray(red, green, blue uint32) uint32 {
-	return (red + green + blue) / 3
+func CalculateGray(red, green, blue uint8) uint32 {
+	return (uint32(red) + uint32(green) + uint32(blue)) / 3
 }
 
-func CalculateDithering(line, column int) {
+func CalculateDithering(x, y int) {
 	var factor int
 
-	if DitherArray[line][column] < 128 {
-		factor = int(DitherArray[line][column] / 16)
-		DitherArray[line][column] = 0
+	var act uint8 = uint8(DitherArray[x][y])
+
+	if act < 128 {
+		factor = int(act / 16)
+		DitherArray[x][y] = 0
 	} else {
-		factor = int((DitherArray[line][column] - 255) / 16)
-		DitherArray[line][column] = 1
+		factor = int((act - 255) / 16)
+		DitherArray[x][y] = 1
 	}
 
-	DitherArray[line+1][column-1] += uint32(factor * 3)
-	DitherArray[line+1][column] += uint32(factor * 5)
-	DitherArray[line+1][column+1] += uint32(factor)
-	DitherArray[line][column+1] += uint32(factor * 7)
+	DitherArray[x+1][y-1] += uint8(factor * 3)
+	DitherArray[x+1][y] += uint8(factor * 5)
+	DitherArray[x+1][y+1] += uint8(factor)
+	DitherArray[x][y+1] += uint8(factor * 7)
 }
 
 func saveImage(path string, i image.Image) {
