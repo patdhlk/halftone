@@ -6,7 +6,6 @@ import (
 	"image/color"
 	"image/png"
 	"log"
-	"math"
 	"os"
 	"runtime"
 )
@@ -100,11 +99,13 @@ func main() {
 
 			//pixel := grayImage.At(y, x)
 			temp := DitherArray[x][y]
-			if temp == 0 {
-				temp = math.MaxUint8
-			} else {
-				temp = 0
-			}
+			/*
+				if temp == 0 {
+					temp = math.MaxUint8
+				} else {
+					temp = 0
+				}
+			*/
 
 			c := color.RGBA{temp, temp, temp, 0xff}
 			dst.SetRGBA(x, y, c)
@@ -119,22 +120,22 @@ func CalculateGray(red, green, blue uint8) uint32 {
 }
 
 func CalculateDithering(x, y int) {
-	var factor int
+	var factor float64
 
 	var act uint8 = uint8(DitherArray[x][y])
 
 	if act < 128 {
-		factor = int(act / 16)
+		factor = float64(act) / 16.0
 		DitherArray[x][y] = 0
 	} else {
-		factor = int((act - 255) / 16)
-		DitherArray[x][y] = 1
+		factor = (float64(act) - 255.0) / 16.0
+		DitherArray[x][y] = 255
 	}
 
-	DitherArray[x+1][y-1] += uint8(factor * 3)
-	DitherArray[x+1][y] += uint8(factor * 5)
+	DitherArray[x+1][y-1] += uint8(factor * 3.0)
+	DitherArray[x+1][y] += uint8(factor * 5.0)
 	DitherArray[x+1][y+1] += uint8(factor)
-	DitherArray[x][y+1] += uint8(factor * 7)
+	DitherArray[x][y+1] += uint8(factor * 7.0)
 }
 
 func saveImage(path string, i image.Image) {
