@@ -26,7 +26,7 @@ func main() {
 	worker := common.NewImageWorker()
 	ic := common.NewImageConverter()
 	img, err := worker.LoadImage("Lenna.png")
-	//img, err := w.LoadImage("testImage.png")
+	//img, err := worker.LoadImage("sample.png")
 
 	if err != nil {
 		log.Fatal(err)
@@ -42,7 +42,7 @@ func main() {
 
 	grayImage := ic.ConvertToGray(img)
 
-	worker.SaveImage("result.png", grayImage)
+	worker.SaveImage("result.jpg", grayImage)
 
 	//the image bounds
 	bounds := grayImage.Bounds()
@@ -64,9 +64,9 @@ func main() {
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
 			//use colored image
-			pixel := img.At(x, y)
+			//pixel := grayImage.At(x, y)
 			//use gray image
-			//pixel := img.At(y, x)
+			pixel := img.At(y, x)
 			red, green, blue, _ := pixel.RGBA()
 			red2 := uint8(red)
 			green2 := uint8(green)
