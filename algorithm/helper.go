@@ -3,6 +3,7 @@ package algorithm
 import (
 	"github.com/pichuio/halftone/common"
 	"image"
+	"image/color"
 )
 
 func ConvertColoredArrToGrayArr(a *common.Array) *common.Array {
@@ -36,6 +37,20 @@ func ConvertImageToGrayArr(image image.Image) *common.Array {
 	}
 
 	return grayArr
+}
+
+func ConvertGrayArrayToImage(arr *common.Array) *image.RGBA {
+	dst := image.NewRGBA(image.Rect(0, 0, arr.Width, arr.Height))
+	for y := 0; y < arr.Height; y++ {
+		for x := 0; x < arr.Width; x++ {
+			//pixel := grayImage.At(y, x)
+			temp := arr.Array[x][y]
+
+			c := color.RGBA{uint8(temp), uint8(temp), uint8(temp), 0xff}
+			dst.SetRGBA(x, y, c)
+		}
+	}
+	return dst
 }
 
 func CalculateGray(red, green, blue uint8) uint32 {
