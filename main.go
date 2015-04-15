@@ -24,7 +24,8 @@ func main() {
 
 	worker := common.NewImageWorker()
 	ic := common.NewImageConverter()
-	img, err := worker.LoadImage("Lenna.png")
+	//img, err := worker.LoadImage("Lenna.png")
+	img, err := worker.LoadImage("Michelangelo.png")
 	//img, err := worker.LoadImage("sample.png")
 
 	if err != nil {
@@ -63,9 +64,9 @@ func main() {
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
 			//use colored image
-			//pixel := grayImage.At(x, y)
+			pixel := grayImage.At(x, y)
 			//use gray image
-			pixel := img.At(y, x)
+			//pixel := img.At(x, y)
 			red, green, blue, _ := pixel.RGBA()
 			red2 := uint8(red)
 			green2 := uint8(green)
@@ -88,9 +89,9 @@ func main() {
 
 	worker.SaveImage("result2.png", dst)
 
-	for x := 1; x < w-1; x++ {
-		for y := 1; y < h-1; y++ {
-			CalculateDithering(x, y)
+	for x := 1; x < w; x++ {
+		for y := 1; y < h; y++ {
+			CalculateDithering(x, y, w, h)
 		}
 	}
 
@@ -119,7 +120,7 @@ func CalculateGray(red, green, blue uint8) uint32 {
 	return (uint32(red) + uint32(green) + uint32(blue)) / 3
 }
 
-func CalculateDithering(x, y int) {
+func CalculateDithering(x, y, w, h int) {
 	var factor float64
 
 	var act uint8 = uint8(DitherArray[x][y])
@@ -132,10 +133,18 @@ func CalculateDithering(x, y int) {
 		DitherArray[x][y] = 255
 	}
 
-	DitherArray[x+1][y-1] += uint8(factor * 3.0)
-	DitherArray[x+1][y] += uint8(factor * 5.0)
-	DitherArray[x+1][y+1] += uint8(factor)
-	DitherArray[x][y+1] += uint8(factor * 7.0)
+	if y-1 >= 0 && x+1 < w {
+		DitherArray[x+1][y-1] += uint8(factor * 3.0)
+	}
+	if x+1 < w {
+		DitherArray[x+1][y] += uint8(factor * 5.0)
+	}
+	if y+1 < h && x+1 < w {
+		DitherArray[x+1][y+1] += uint8(factor)
+	}
+	if y+1 < h {
+		DitherArray[x][y+1] += uint8(factor * 7.0)
+	}
 }
 
 func saveImage(path string, i image.Image) {
