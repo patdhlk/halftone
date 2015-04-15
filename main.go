@@ -15,7 +15,7 @@ var pal = color.Palette{
 	color.White,
 }
 
-var DitherArray [][]uint8
+var DitherArray [][]int32
 
 func main() {
 	//USING ALL CORES OF YOUR MACHINE FOR PARALLEL PROCESSING
@@ -55,9 +55,9 @@ func main() {
 
 	//create 2D array
 
-	DitherArray = make([][]uint8, w)
+	DitherArray = make([][]int32, w)
 	for i := 0; i < w; i++ {
-		DitherArray[i] = make([]uint8, h)
+		DitherArray[i] = make([]int32, h)
 	}
 
 	//http://dotnet-snippets.de/snippet/floyd-steinberg-dithering/94
@@ -73,7 +73,7 @@ func main() {
 			blue2 := uint8(blue)
 			gray := CalculateGray(red2, green2, blue2)
 			gray_ := uint8(gray)
-			DitherArray[x][y] = gray_
+			DitherArray[x][y] = int32(gray_)
 		}
 	}
 
@@ -82,7 +82,7 @@ func main() {
 			//pixel := grayImage.At(y, x)
 			temp := DitherArray[x][y]
 
-			c := color.RGBA{temp, temp, temp, 0xff}
+			c := color.RGBA{uint8(temp), uint8(temp), uint8(temp), 0xff}
 			dst.SetRGBA(x, y, c)
 		}
 	}
@@ -108,7 +108,7 @@ func main() {
 				}
 			*/
 
-			c := color.RGBA{temp, temp, temp, 0xff}
+			c := color.RGBA{uint8(temp), uint8(temp), uint8(temp), 0xff}
 			dst.SetRGBA(x, y, c)
 		}
 	}
@@ -121,29 +121,27 @@ func CalculateGray(red, green, blue uint8) uint32 {
 }
 
 func CalculateDithering(x, y, w, h int) {
-	var factor float64
+	oldPixel := DitherArray[x][y]
 
-	var act uint8 = uint8(DitherArray[x][y])
-
-	if act < 128 {
-		factor = float64(act) / 16.0
+	if oldPixel < 128 {
 		DitherArray[x][y] = 0
 	} else {
-		factor = (float64(act) - 255.0) / 16.0
 		DitherArray[x][y] = 255
 	}
 
+	quantError := oldPixel - DitherArray[x][y]
+
 	if y-1 >= 0 && x+1 < w {
-		DitherArray[x+1][y-1] += uint8(factor * 3.0)
+		DitherArray[x+1][y-1] += int32(float64(quantError) * (3.0 / 16.0))
 	}
 	if x+1 < w {
-		DitherArray[x+1][y] += uint8(factor * 5.0)
+		DitherArray[x+1][y] += int32(float64(quantError) * (5.0 / 16.0))
 	}
 	if y+1 < h && x+1 < w {
-		DitherArray[x+1][y+1] += uint8(factor)
+		DitherArray[x+1][y+1] += int32(float64(quantError) * (1.0 / 16.0))
 	}
 	if y+1 < h {
-		DitherArray[x][y+1] += uint8(factor * 7.0)
+		DitherArray[x][y+1] += int32(float64(quantError) * (7.0 / 16.0))
 	}
 }
 
