@@ -64,9 +64,9 @@ func main() {
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
 			//use colored image
-			pixel := grayImage.At(x, y)
+			//pixel := grayImage.At(x, y)
 			//use gray image
-			//pixel := img.At(x, y)
+			pixel := img.At(x, y)
 			red, green, blue, _ := pixel.RGBA()
 			red2 := uint8(red)
 			green2 := uint8(green)
