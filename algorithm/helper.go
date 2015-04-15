@@ -53,6 +53,12 @@ func ConvertGrayArrayToImage(arr *common.Array) *image.RGBA {
 	return dst
 }
 
+// Start position: Left button
+// Dither order: Bottom to top; continue with next column
+// Matrix:
+//  7  1
+//  P  5
+//  X  3
 func DitheringMatrix2x3_1(a *common.Array) *common.Array {
 	arr := common.CloneArray(a)
 	for x := 0; x < arr.Width; x++ {
@@ -86,6 +92,11 @@ func DitheringMatrix2x3_1(a *common.Array) *common.Array {
 
 }
 
+// Start position: Left Top
+// Dither order: Left to right; continue with next row
+// Matrix:
+//  X  P  7
+//  3  5  1
 func DitheringMatrix2x3_2(a *common.Array) *common.Array {
 	arr := common.CloneArray(a)
 	for y := arr.Height - 1; y >= 0; y-- {
@@ -100,14 +111,14 @@ func DitheringMatrix2x3_2(a *common.Array) *common.Array {
 
 			quantError := oldPixel - arr.Array[x][y]
 
-			if x > 0 && y > 0 {
-				arr.Array[x-1][y-1] += int32(float64(quantError) * (3.0 / 16.0))
-			}
 			if y > 0 {
+				if x > 0 {
+					arr.Array[x-1][y-1] += int32(float64(quantError) * (3.0 / 16.0))
+				}
 				arr.Array[x][y-1] += int32(float64(quantError) * (5.0 / 16.0))
-			}
-			if y > 0 && x+1 < arr.Width {
-				arr.Array[x+1][y-1] += int32(float64(quantError) * (1.0 / 16.0))
+				if x+1 < arr.Width {
+					arr.Array[x+1][y-1] += int32(float64(quantError) * (1.0 / 16.0))
+				}
 			}
 			if x+1 < arr.Width {
 				arr.Array[x+1][y] += int32(float64(quantError) * (7.0 / 16.0))
