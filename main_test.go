@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/pichuio/halftone/algorithm"
 	"github.com/pichuio/halftone/common"
 	"testing"
 )
@@ -81,4 +82,36 @@ func TestColorToGray(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestDitherResult2(t *testing.T) {
+	grayArr := common.NewArray(200, 100)
+	for x := 0; x < grayArr.Width; x++ {
+		for y := 0; y < grayArr.Height; y++ {
+			grayArr.Array[x][y] = 127
+		}
+	}
+	newArr := algorithm.DitheringMatrix2x3_2(grayArr)
+	for x := 0; x < grayArr.Width; x++ {
+		for y := 0; y < grayArr.Height; y++ {
+			xMod2 := x%2 == 0
+			yMod2 := y%2 == 0
+
+			if (xMod2 && !yMod2) || (!xMod2 && yMod2) {
+				//BLACK
+				if newArr.Array[x][newArr.Height-1-y] != 255 {
+					t.Errorf("TestDitherResult2 != 255 - [%v][%v] %v", x, newArr.Height-1-y, newArr.Array[x][newArr.Height-1-y])
+				}
+			} else {
+				if newArr.Array[x][newArr.Height-1-y] != 0 {
+					t.Errorf("TestDitherResult2 != 0 - [%v][%v] %v", x, newArr.Height-1-y, newArr.Array[x][newArr.Height-1-y])
+				}
+			}
+		}
+	}
+
+	dst := algorithm.ConvertGrayArrayToImage(newArr)
+
+	worker := common.NewImageWorker()
+	worker.SaveImage("TestDitherResult2.png", dst)
 }
