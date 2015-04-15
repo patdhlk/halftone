@@ -53,7 +53,7 @@ func main() {
 	//save gray picture
 	worker.SaveImage("result2.png", dst)
 
-	arr = algorithm.Dithering(arr)
+	arr = algorithm.DitheringMatrix2x3_2(arr)
 
 	dst = algorithm.ConvertGrayArrayToImage(arr)
 

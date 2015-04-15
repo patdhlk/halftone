@@ -53,7 +53,7 @@ func ConvertGrayArrayToImage(arr *common.Array) *image.RGBA {
 	return dst
 }
 
-func Dithering(a *common.Array) *common.Array {
+func DitheringMatrix2x3_1(a *common.Array) *common.Array {
 	arr := common.CloneArray(a)
 	for x := 0; x < arr.Width; x++ {
 		for y := 0; y < arr.Height; y++ {
@@ -67,7 +67,7 @@ func Dithering(a *common.Array) *common.Array {
 
 			quantError := oldPixel - arr.Array[x][y]
 
-			if y-1 >= 0 && x+1 < arr.Width {
+			if y > 0 && x+1 < arr.Width {
 				arr.Array[x+1][y-1] += int32(float64(quantError) * (3.0 / 16.0))
 			}
 			if x+1 < arr.Width {
@@ -78,6 +78,39 @@ func Dithering(a *common.Array) *common.Array {
 			}
 			if y+1 < arr.Height {
 				arr.Array[x][y+1] += int32(float64(quantError) * (7.0 / 16.0))
+			}
+		}
+	}
+
+	return arr
+
+}
+
+func DitheringMatrix2x3_2(a *common.Array) *common.Array {
+	arr := common.CloneArray(a)
+	for y := arr.Height - 1; y >= 0; y-- {
+		for x := 0; x < arr.Width; x++ {
+			oldPixel := arr.Array[x][y]
+
+			if oldPixel < 128 {
+				arr.Array[x][y] = 0
+			} else {
+				arr.Array[x][y] = 255
+			}
+
+			quantError := oldPixel - arr.Array[x][y]
+
+			if x > 0 && y > 0 {
+				arr.Array[x-1][y-1] += int32(float64(quantError) * (3.0 / 16.0))
+			}
+			if y > 0 {
+				arr.Array[x][y-1] += int32(float64(quantError) * (5.0 / 16.0))
+			}
+			if y > 0 && x+1 < arr.Width {
+				arr.Array[x+1][y-1] += int32(float64(quantError) * (1.0 / 16.0))
+			}
+			if x+1 < arr.Width {
+				arr.Array[x+1][y] += int32(float64(quantError) * (7.0 / 16.0))
 			}
 		}
 	}
