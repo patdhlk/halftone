@@ -65,11 +65,7 @@ func DitheringMatrix2x3_1(a *common.Array) *common.Array {
 		for y := 0; y < arr.Height; y++ {
 			oldPixel := arr.Array[x][y]
 
-			if oldPixel < 128 {
-				arr.Array[x][y] = 0
-			} else {
-				arr.Array[x][y] = 255
-			}
+			arr.Array[x][y] = GetClosestColor(oldPixel)
 
 			quantError := oldPixel - arr.Array[x][y]
 
@@ -87,9 +83,7 @@ func DitheringMatrix2x3_1(a *common.Array) *common.Array {
 			}
 		}
 	}
-
 	return arr
-
 }
 
 // Start position: Left Top
@@ -103,14 +97,13 @@ func DitheringMatrix2x3_2(a *common.Array) *common.Array {
 		for x := 0; x < arr.Width; x++ {
 			oldPixel := arr.Array[x][y]
 
-			if oldPixel < 128 {
-				arr.Array[x][y] = 0
-			} else {
-				arr.Array[x][y] = 255
-			}
+			arr.Array[x][y] = GetClosestColor(oldPixel)
 
 			quantError := oldPixel - arr.Array[x][y]
 
+			if x+1 < arr.Width {
+				arr.Array[x+1][y] += int32(float64(quantError) * (7.0 / 16.0))
+			}
 			if y > 0 {
 				if x > 0 {
 					arr.Array[x-1][y-1] += int32(float64(quantError) * (3.0 / 16.0))
@@ -120,14 +113,112 @@ func DitheringMatrix2x3_2(a *common.Array) *common.Array {
 					arr.Array[x+1][y-1] += int32(float64(quantError) * (1.0 / 16.0))
 				}
 			}
+		}
+	}
+	return arr
+}
+
+// Start position: Left Top
+// Dither order: Left to right; continue with next row
+// Matrix:
+//  X  P  4  1
+//  1  4  1
+//     1
+func DitheringMatrix3x4(a *common.Array) *common.Array {
+	arr := common.CloneArray(a)
+	for y := arr.Height - 1; y >= 0; y-- {
+		for x := 0; x < arr.Width; x++ {
+			oldPixel := arr.Array[x][y]
+
+			arr.Array[x][y] = GetClosestColor(oldPixel)
+
+			quantError := oldPixel - arr.Array[x][y]
+
 			if x+1 < arr.Width {
-				arr.Array[x+1][y] += int32(float64(quantError) * (7.0 / 16.0))
+				arr.Array[x+1][y] += int32(float64(quantError) * (4.0 / 12.0))
+			}
+			if x+2 < arr.Width {
+				arr.Array[x+2][y] += int32(float64(quantError) * (1.0 / 12.0))
+			}
+			if y > 0 && x > 0 {
+				arr.Array[x-1][y-1] += int32(float64(quantError) * (1.0 / 12.0))
+			}
+			if y > 0 {
+				arr.Array[x][y-1] += int32(float64(quantError) * (4.0 / 12.0))
+			}
+			if y > 0 && x+1 < arr.Width {
+				arr.Array[x+1][y-1] += int32(float64(quantError) * (1.0 / 12.0))
+			}
+			if y > 1 {
+				arr.Array[x][y-2] += int32(float64(quantError) * (1.0 / 12.0))
 			}
 		}
 	}
-
 	return arr
+}
 
+// Start position: Left Top
+// Dither order: Left to right; continue with next row
+// Matrix:
+//  X  X  P  8  4
+//  2  4  8  4  2
+//  1  2  4  2  1
+func DitheringMatrix3x5(a *common.Array) *common.Array {
+	arr := common.CloneArray(a)
+	for y := arr.Height - 1; y >= 0; y-- {
+		for x := 0; x < arr.Width; x++ {
+			oldPixel := arr.Array[x][y]
+
+			arr.Array[x][y] = GetClosestColor(oldPixel)
+
+			quantError := oldPixel - arr.Array[x][y]
+
+			if x+1 < arr.Width {
+				arr.Array[x+1][y] += int32(float64(quantError) * (8.0 / 42.0))
+			}
+			if x+2 < arr.Width {
+				arr.Array[x+2][y] += int32(float64(quantError) * (4.0 / 42.0))
+			}
+			if y > 0 {
+				if x > 1 {
+					arr.Array[x-2][y-1] += int32(float64(quantError) * (2.0 / 42.0))
+				}
+				if x > 0 {
+					arr.Array[x-1][y-1] += int32(float64(quantError) * (4.0 / 42.0))
+				}
+				arr.Array[x][y-1] += int32(float64(quantError) * (8.0 / 42.0))
+				if x+1 < arr.Width {
+					arr.Array[x+1][y-1] += int32(float64(quantError) * (4.0 / 42.0))
+				}
+				if x+2 < arr.Width {
+					arr.Array[x+2][y-1] += int32(float64(quantError) * (2.0 / 42.0))
+				}
+			}
+			if y > 1 {
+				if x > 1 {
+					arr.Array[x-2][y-2] += int32(float64(quantError) * (1.0 / 42.0))
+				}
+				if x > 0 {
+					arr.Array[x-1][y-2] += int32(float64(quantError) * (2.0 / 42.0))
+				}
+				arr.Array[x][y-2] += int32(float64(quantError) * (4.0 / 42.0))
+				if x+1 < arr.Width {
+					arr.Array[x+1][y-2] += int32(float64(quantError) * (2.0 / 42.0))
+				}
+				if x+2 < arr.Width {
+					arr.Array[x+2][y-2] += int32(float64(quantError) * (1.0 / 42.0))
+				}
+			}
+		}
+	}
+	return arr
+}
+
+func GetClosestColor(color int32) int32 {
+	if color < 128 {
+		return 0
+	}
+	return 255
 }
 
 func CalculateGray(red, green, blue uint8) uint32 {
