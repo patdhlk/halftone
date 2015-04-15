@@ -42,7 +42,7 @@ func main() {
 
 	grayImage := ic.ConvertToGray(img)
 
-	worker.SaveImage("result.jpg", grayImage)
+	worker.SaveImage("result.png", grayImage)
 
 	//the image bounds
 	bounds := grayImage.Bounds()
@@ -132,16 +132,16 @@ func CalculateDithering(x, y, w, h int) {
 	quantError := oldPixel - DitherArray[x][y]
 
 	if y-1 >= 0 && x+1 < w {
-		DitherArray[x+1][y-1] += int32(float64(quantError) * (3.0 / 16.0))
+		DitherArray[x+1][y-1] += int32(float32(quantError) * (3.0 / 16.0))
 	}
 	if x+1 < w {
-		DitherArray[x+1][y] += int32(float64(quantError) * (5.0 / 16.0))
+		DitherArray[x+1][y] += int32(float32(quantError) * (5.0 / 16.0))
 	}
 	if y+1 < h && x+1 < w {
-		DitherArray[x+1][y+1] += int32(float64(quantError) * (1.0 / 16.0))
+		DitherArray[x+1][y+1] += int32(float32(quantError) * (1.0 / 16.0))
 	}
 	if y+1 < h {
-		DitherArray[x][y+1] += int32(float64(quantError) * (7.0 / 16.0))
+		DitherArray[x][y+1] += int32(float32(quantError) * (7.0 / 16.0))
 	}
 }
 
