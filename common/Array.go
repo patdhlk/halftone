@@ -22,7 +22,11 @@ func NewArray(w, h int) *Array {
 func CloneArray(a *Array) *Array {
 	newArray := NewArray(a.Width, a.Height)
 
-	//more stuff here
+	for y := 0; y < a.Height; y++ {
+		for x := 0; x < a.Width; x++ {
+			newArray.Array[x][y] = a.Array[x][y]
+		}
+	}
 
 	return newArray
 }
