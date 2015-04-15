@@ -89,8 +89,8 @@ func main() {
 
 	worker.SaveImage("result2.png", dst)
 
-	for x := 1; x < w; x++ {
-		for y := 1; y < h; y++ {
+	for x := 0; x < w; x++ {
+		for y := 0; y < h; y++ {
 			CalculateDithering(x, y, w, h)
 		}
 	}
