@@ -40,7 +40,7 @@ func main() {
 
 	grayImage := ic.ConvertToGray(img)
 
-	worker.SaveImage("result.jpg", grayImage)
+	worker.SaveImage("result.png", grayImage)
 
 	log.Println("specify dest")
 
@@ -53,9 +53,9 @@ func main() {
 	//save gray picture
 	worker.SaveImage("result2.png", dst)
 
-	//arr = algorithm.DitheringMatrix2x3_2(arr)
-	//arr = algorithm.DitheringMatrix3x4(arr)
-	arr = algorithm.DitheringMatrix3x5(arr)
+	arr = algorithm.DitheringMatrix2x3_2(arr, 0.9)
+	//arr = algorithm.DitheringMatrix3x4(arr, 1.0)
+	//arr = algorithm.DitheringMatrix3x5(arr, 1.0)
 
 	dst = algorithm.ConvertGrayArrayToImage(arr)
 
