@@ -22,9 +22,8 @@ func main() {
 
 	worker := common.NewImageWorker()
 	ic := common.NewImageConverter()
-	//img, err := worker.LoadImage("Lenna.png")
-	img, err := worker.LoadImage("Michelangelo.png")
-	//img, err := worker.LoadImage("sample.png")
+	//img, err := worker.LoadImage("images/original/Lenna.png")
+	img, err := worker.LoadImage("images/original/Michelangelo.png")
 
 	if err != nil {
 		log.Fatal(err)
@@ -40,7 +39,7 @@ func main() {
 
 	grayImage := ic.ConvertToGray(img)
 
-	worker.SaveImage("result.png", grayImage)
+	worker.SaveImage("images/processing/seq_grayImage.png", grayImage)
 
 	log.Println("specify dest")
 
@@ -51,7 +50,7 @@ func main() {
 	dst := algorithm.ConvertGrayArrayToImage(arr)
 
 	//save gray picture
-	worker.SaveImage("result2.png", dst)
+	worker.SaveImage("images/processing/seq_grayImage2.png", dst)
 
 	arr = algorithm.DitheringMatrix2x3_2(arr, 0.9)
 	//arr = algorithm.DitheringMatrix3x4(arr, 1.0)
@@ -60,5 +59,5 @@ func main() {
 	dst = algorithm.ConvertGrayArrayToImage(arr)
 
 	//save gray picture
-	worker.SaveImage("sequential.png", dst)
+	worker.SaveImage("images/processing/seq_result.png", dst)
 }

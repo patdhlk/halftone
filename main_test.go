@@ -8,8 +8,8 @@ import (
 
 func TestDitherResult(t *testing.T) {
 	worker := common.NewImageWorker()
-	img1, _ := worker.LoadImage("sequential.png")
-	img2, _ := worker.LoadImage("Michelangelo_FloydWiki.png")
+	img1, _ := worker.LoadImage("images/processing/seq_result.png")
+	img2, _ := worker.LoadImage("images/original/Michelangelo_Result.png")
 
 	width1, height1 := worker.GetImageDemensions(img1)
 
@@ -46,8 +46,8 @@ func TestDitherResult(t *testing.T) {
 
 func TestColorToGray(t *testing.T) {
 	worker := common.NewImageWorker()
-	img1, _ := worker.LoadImage("result.png")
-	img2, _ := worker.LoadImage("result2.png")
+	img1, _ := worker.LoadImage("images/processing/seq_grayImage.png")
+	img2, _ := worker.LoadImage("images/processing/seq_grayImage2.png")
 
 	width1, height1 := worker.GetImageDemensions(img1)
 
@@ -113,5 +113,5 @@ func TestDitherResult2(t *testing.T) {
 	dst := algorithm.ConvertGrayArrayToImage(newArr)
 
 	worker := common.NewImageWorker()
-	worker.SaveImage("TestDitherResult2.png", dst)
+	worker.SaveImage("images/testing/chessboard.png", dst)
 }
