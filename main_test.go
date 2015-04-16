@@ -91,7 +91,7 @@ func TestDitherResult2(t *testing.T) {
 			grayArr.Array[x][y] = 127
 		}
 	}
-	newArr := algorithm.DitheringMatrix2x3_2(grayArr)
+	newArr := algorithm.DitheringMatrix2x3_2(grayArr, 1.0)
 	for x := 0; x < grayArr.Width; x++ {
 		for y := 0; y < grayArr.Height; y++ {
 			xMod2 := x%2 == 0
