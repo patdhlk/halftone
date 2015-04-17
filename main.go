@@ -34,6 +34,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	//
 	width, height := worker.GetImageDemensions(img)
 
 	log.Println(width, height)
