@@ -4,17 +4,9 @@ import (
 	"github.com/pichuio/halftone/algorithm"
 	"github.com/pichuio/halftone/common"
 	"github.com/pichuio/halftone/sequential"
-	"image/color"
 	"log"
 	"runtime"
 )
-
-var pal = color.Palette{
-	color.Black,
-	color.White,
-}
-
-var DitherArray [][]int32
 
 func main() {
 
@@ -26,12 +18,17 @@ func main() {
 
 	//USING ALL CORES OF YOUR MACHINE FOR PARALLEL PROCESSING
 	numcpu := runtime.NumCPU()
+	log.Println(numcpu)
 	runtime.GOMAXPROCS(numcpu)
+
+	//create processing directory, because if dir not exists the outputimages cannot found by the user
+	go common.CreateDirIfNotExist("images/processing")
 
 	worker := common.NewImageWorker()
 	ic := common.NewImageConverter()
 	//img, err := worker.LoadImage("images/original/Lenna.png")
-	img, err := worker.LoadImage("images/original/Michelangelo.png")
+	//img, err := worker.LoadImage("images/original/Michelangelo.png")
+	img, err := worker.LoadImage("images/original/sample.jpg")
 
 	if err != nil {
 		log.Fatal(err)
@@ -50,13 +47,12 @@ func main() {
 	worker.SaveImage("images/processing/seq_grayImage.png", grayImage)
 
 	arr := algorithm.ConvertImageToGrayArr(img)
-	//gray array
-	DitherArray = arr.Array
 	//gray image
 	dst := algorithm.ConvertGrayArrayToImage(arr)
 	//save gray picture
 	worker.SaveImage("images/processing/seq_grayImage2.png", dst)
 
+	log.Println("start dithering")
 	//sequential processing
 	dst = sequential.RunSequentialMain(arr, 0.9)
 
@@ -65,4 +61,5 @@ func main() {
 
 	//save gray picture
 	worker.SaveImage("images/processing/seq_result.png", dst)
+	log.Println("FINISHED")
 }
