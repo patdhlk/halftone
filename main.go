@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/pichuio/halftone/algorithm"
 	"github.com/pichuio/halftone/common"
+	"github.com/pichuio/halftone/sequential"
 	"image/color"
 	"log"
 	"runtime"
@@ -16,15 +17,16 @@ var pal = color.Palette{
 var DitherArray [][]int32
 
 func main() {
-	//USING ALL CORES OF YOUR MACHINE FOR PARALLEL PROCESSING
-	numcpu := runtime.NumCPU()
-	runtime.GOMAXPROCS(numcpu)
 
 	log.Println("################## error diffusion ##################")
 	log.Println("*****************************************************")
 	log.Println("### supported image formats: *.jpg, *.jpeg, *.gif ###")
 	log.Println("*****************************************************")
 	log.Println("#####################################################")
+
+	//USING ALL CORES OF YOUR MACHINE FOR PARALLEL PROCESSING
+	numcpu := runtime.NumCPU()
+	runtime.GOMAXPROCS(numcpu)
 
 	worker := common.NewImageWorker()
 	ic := common.NewImageConverter()
@@ -47,22 +49,19 @@ func main() {
 
 	worker.SaveImage("images/processing/seq_grayImage.png", grayImage)
 
-	log.Println("specify dest")
-
 	arr := algorithm.ConvertImageToGrayArr(img)
 	//gray array
 	DitherArray = arr.Array
 	//gray image
 	dst := algorithm.ConvertGrayArrayToImage(arr)
-
 	//save gray picture
 	worker.SaveImage("images/processing/seq_grayImage2.png", dst)
 
-	arr = algorithm.DitheringMatrix2x3_2(arr, 0.9)
-	//arr = algorithm.DitheringMatrix3x4(arr, 1.0)
-	//arr = algorithm.DitheringMatrix3x5(arr, 1.0)
+	//sequential processing
+	dst = sequential.RunSequentialMain(arr, 0.9)
 
-	dst = algorithm.ConvertGrayArrayToImage(arr)
+	//parallel processing
+	//TODO
 
 	//save gray picture
 	worker.SaveImage("images/processing/seq_result.png", dst)
