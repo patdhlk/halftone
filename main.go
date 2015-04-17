@@ -20,6 +20,12 @@ func main() {
 	numcpu := runtime.NumCPU()
 	runtime.GOMAXPROCS(numcpu)
 
+	log.Println("################## error diffusion ##################")
+	log.Println("*****************************************************")
+	log.Println("### supported image formats: *.jpg, *.jpeg, *.gif ###")
+	log.Println("*****************************************************")
+	log.Println("#####################################################")
+
 	worker := common.NewImageWorker()
 	ic := common.NewImageConverter()
 	//img, err := worker.LoadImage("images/original/Lenna.png")
