@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/pichuio/halftone/algorithm"
-	"github.com/pichuio/halftone/common"
-	"testing"
+//	"github.com/pichuio/halftone/algorithm"
+//	"github.com/pichuio/halftone/common"
+//	"testing"
 )
 
 func TestDitherResult(t *testing.T) {
