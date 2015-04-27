@@ -22,13 +22,8 @@ func RunParallelMain(ar *common.Array, factorErr float64) *image.RGBA {
 }
 
 func jobFactory(arr *common.Array, factorErr float64) chan Job {
-	jobs := make(chan job)
-	
-	go func() {
-		for i:= 0; i < arr.Height; i++{
-			for j := 0; j < arr.Width; j++{
-				
-			}
-		}
-	}
+	jobs := make(chan Job)
+
+	return jobs
+
 }
