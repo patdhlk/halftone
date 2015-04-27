@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/pichuio/halftone/algorithm"
 	"github.com/pichuio/halftone/common"
+	"github.com/pichuio/halftone/parallel"
 	"github.com/pichuio/halftone/sequential"
 	"log"
 	"runtime"
@@ -27,8 +28,8 @@ func main() {
 	worker := common.NewImageWorker()
 	ic := common.NewImageConverter()
 	//img, err := worker.LoadImage("images/original/Lenna.png")
-	//img, err := worker.LoadImage("images/original/Michelangelo.png")
-	img, err := worker.LoadImage("images/original/sample.jpg")
+	img, err := worker.LoadImage("images/original/Michelangelo.png")
+	//img, err := worker.LoadImage("images/original/sample.jpg")
 
 	if err != nil {
 		log.Fatal(err)
@@ -58,9 +59,10 @@ func main() {
 	dst = sequential.RunSequentialMain(arr, 0.9)
 
 	//parallel processing
-	//TODO
+	dst_par := parallel.RunParallelMain(arr, 0.9) //TODO
 
 	//save gray picture
 	worker.SaveImage("images/processing/seq_result.png", dst)
+	worker.SaveImage("images/processing/par_result.png", dst_par)
 	log.Println("FINISHED")
 }
