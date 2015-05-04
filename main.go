@@ -59,7 +59,7 @@ func main() {
 	dst = sequential.RunSequentialMain(arr, 0.9)
 
 	//parallel processing
-	dst_par := parallel.RunParallelMain(arr, 0.9) //TODO
+	dst_par := parallel.RunParallelMainMutex(arr, 0.9) //TODO
 
 	//save gray picture
 	worker.SaveImage("images/processing/seq_result.png", dst)
