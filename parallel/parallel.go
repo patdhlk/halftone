@@ -8,7 +8,7 @@ import (
 	"sync"
 )
 
-var arr *common.Array
+var renderArray *common.Array //use this array for concurrent processing
 var lock = &sync.Mutex{}
 
 type job struct {
@@ -37,11 +37,35 @@ func jobFactory(ar *common.Array) chan job {
 		close(jobs)
 	}()
 	return jobs
+}
 
+func backgroundWorker(jobs <-chan job, results chan<- result, done chan<- bool) {
+	for job := range jobs {
+		results <- result{job.line, job.y}
+	}
+	done <- true
+}
+
+func resultCollector() {
+	//TODO
+}
+
+func workerFactory(count int, jobs <-chan job, results chan<- result) {
+	done := make(chan bool)
+	for i := 0; i < count; i++ {
+		go backgroundWorker(jobs, results, done)
+	}
+
+	go func() {
+		for i := 0; i < count; i++ {
+			<-done
+		}
+		close(results)
+	}()
 }
 
 func RunParallelMainMutex(ar *common.Array, factorErr float64) *image.RGBA {
-	_ = jobFactory(ar)
-
+	//_ = jobFactory(ar)
+	renderArray = ar
 	return nil
 }
