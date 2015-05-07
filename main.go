@@ -65,6 +65,8 @@ func main() {
 
 	//save gray picture
 	worker.SaveImage("images/processing/seq_result.png", dst)
-	worker.SaveImage("images/processing/par_result.png", dst_par)
+	if dst_par != nil {
+		worker.SaveImage("images/processing/par_result.png", dst_par)
+	}
 	log.Println("FINISHED")
 }

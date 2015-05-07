@@ -4,6 +4,7 @@ import (
 	//"github.com/pichuio/halftone/algorithm"
 	"github.com/pichuio/halftone/common"
 	"image"
+	"log"
 	"sync"
 )
 
@@ -24,7 +25,14 @@ func jobFactory(ar *common.Array) chan job {
 	jobs := make(chan job)
 	go func() {
 		for y := 0; y < ar.Height; y++ {
-
+			j := new(job)
+			j.line = make([]int32, ar.Width)
+			for x := 0; x < ar.Width; x++ {
+				j.line[x] = ar.Array[x][y]
+				j.y = y
+				jobs <- *j
+			}
+			log.Println(y, " ", j.line)
 		}
 		close(jobs)
 	}()
@@ -33,5 +41,7 @@ func jobFactory(ar *common.Array) chan job {
 }
 
 func RunParallelMainMutex(ar *common.Array, factorErr float64) *image.RGBA {
+	_ = jobFactory(ar)
+
 	return nil
 }
