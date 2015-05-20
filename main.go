@@ -56,7 +56,9 @@ func main() {
 
 	log.Println("start dithering")
 	//sequential processing
-	dst = sequential.RunSequentialMain(arr, 0.9)
+	dst = sequential.RunSequentialMain(arr, 0, 0.9)
+
+	worker.SaveImage("images/processing/seq_result.png", dst)
 
 	//parallel processing
 	dst_par := parallel.RunParallelMain(arr, 0.9) //TODO
