@@ -37,7 +37,7 @@ func (w Worker) Start() {
 				// Receive a work request.
 				log.Println("worker", w.ID, ": Received work request")
 
-				log.Println("worker", w.ID, ": Hello, ", work.Name)
+				log.Println("worker", w.ID, ": ", work.Name, " working")
 
 			case <-w.QuitChan:
 				// We have been asked to stop.

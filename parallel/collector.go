@@ -7,8 +7,11 @@ import (
 )
 
 var WorkQueue = make(chan WorkRequest)
+var GlobArray *common.Array
 
 func Collector(arr *common.Array) {
+	//do this only once and use the GlobalArray from this point
+	GlobArray = common.CloneArray(arr)
 	//for y := arr.Height - 1; y >= 0; y-- {
 	//		for x := 0; x < arr.Width; x++ {
 	//			oldPixel := arr.Array[x][y]
@@ -20,10 +23,10 @@ func Collector(arr *common.Array) {
 	//	}
 	//}
 
-	for x := 0; x < arr.Width; x++ {
-		oldPixel := arr.Array[x][0]
+	for x := 0; x < GlobArray.Width; x++ {
+		oldPixel := GlobArray.Array[x][GlobArray.Height-1]
 		s := "worker_" + strconv.Itoa(int(oldPixel))
-		work := WorkRequest{Name: s, X: x, Y: 0, Value: oldPixel}
+		work := WorkRequest{Name: s, X: x, Y: GlobArray.Height - 1, Value: oldPixel}
 
 		WorkQueue <- work
 	}
