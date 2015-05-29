@@ -1,3 +1,5 @@
+//this package provides the parallel stuff
+//infrastructure is done, but nothing more
 package parallel
 
 import (
@@ -9,6 +11,9 @@ import (
 var WorkQueue = make(chan WorkRequest)
 var GlobArray *common.Array
 
+//function Collector receives (our planned way was) lines from the image to process
+//and builds a work request that workers can understand and work with it and pushes
+//the work on the end of the WorkQueue
 func Collector(arr *common.Array) {
 	//do this only once and use the GlobalArray from this point
 	GlobArray = common.CloneArray(arr)

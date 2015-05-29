@@ -9,6 +9,10 @@ import (
 	"runtime"
 )
 
+//application provides halftone dithering for specified images, currently
+//only sequential dithering is supperted because we think there is no time affort
+//when using the parallel solution.
+//the infrastructure for the parallel solution is done..but nothing more
 func main() {
 
 	log.Println("################## error diffusion ##################")

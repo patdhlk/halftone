@@ -4,8 +4,13 @@ import (
 	"log"
 )
 
+//declareing and initializing our WorkerQueue which is the buffered channel that
+//holds the work channels from each worker
+//remembering that the worker is responsible for adding itself into the workers
+//queue
 var WorkerQueue chan chan WorkRequest
 
+//
 func StartDispatcher() {
 	nworkers := 10
 
