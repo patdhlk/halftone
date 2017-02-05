@@ -19,6 +19,13 @@ type ThresholdDitherer struct {
 	threshold uint8
 }
 
+func NewThresholdDitherer(th uint8) ThresholdDitherer{
+	val := ThresholdDitherer{
+		threshold: th,
+	}
+	return val
+}
+
 func (dith ThresholdDitherer) Run(gray *image.Gray) *image.Gray {
 	var (
 		bounds   = gray.Bounds()
@@ -40,6 +47,16 @@ type GridDitherer struct {
 	alpha float64 // Minimum desired number of points in a cell
 	beta  float64 // Maximum desired number of points in a cell
 	rng   *rand.Rand
+}
+
+func NewGridDitherer(cellSize int, a, b float64, rand *rand.Rand) GridDitherer{
+	val := GridDitherer{
+		k: cellSize,
+		alpha: a,
+		beta: b,
+		rng: rand,
+	} 
+	return val
 }
 
 func (dith GridDitherer) Run(gray *image.Gray) *image.Gray {
