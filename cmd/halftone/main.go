@@ -54,7 +54,7 @@ func main() {
 		f, err := os.Create(newFilename)
 		if err != nil {
 			fmt.Printf("%s", err.Error())
-			os.Exit(1) 
+			os.Exit(1)
 		}
 		defer f.Close()
 		png.Encode(f, dithered)
