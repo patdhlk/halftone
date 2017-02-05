@@ -19,7 +19,7 @@ type ThresholdDitherer struct {
 	threshold uint8
 }
 
-func NewThresholdDitherer(th uint8) ThresholdDitherer{
+func NewThresholdDitherer(th uint8) ThresholdDitherer {
 	val := ThresholdDitherer{
 		threshold: th,
 	}
@@ -49,13 +49,13 @@ type GridDitherer struct {
 	rng   *rand.Rand
 }
 
-func NewGridDitherer(cellSize int, a, b float64, rand *rand.Rand) GridDitherer{
+func NewGridDitherer(cellSize int, a, b float64, rand *rand.Rand) GridDitherer {
 	val := GridDitherer{
-		k: cellSize,
+		k:     cellSize,
 		alpha: a,
-		beta: b,
-		rng: rand,
-	} 
+		beta:  b,
+		rng:   rand,
+	}
 	return val
 }
 

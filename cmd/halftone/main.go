@@ -1,22 +1,21 @@
 package main
 
 import (
-	"image/png"
 	"flag"
+	"fmt"
+	"image"
+	"image/png"
+	"log"
 	"math/rand"
 	"os"
 	"strings"
-	"fmt"
 	"time"
-	"image"
-    "log"
 
 	"github.com/patdhlk/halftone"
-	
 )
 
 var (
-	rng = rand.New(rand.NewSource(time.Now().UnixNano()))
+	rng           = rand.New(rand.NewSource(time.Now().UnixNano()))
 	ditherModeVar int
 )
 
@@ -25,16 +24,16 @@ func init() {
 }
 
 func main() {
-	flag.Parse() 
+	flag.Parse()
 	files := []string{"img/Lenna.png", "img/Michelangelo.png", "img/radon.jpg", "img/sample.jpg", "img/timon.jpg"}
 	worker := halftone.NewImageWorker()
-    cv := halftone.NewImageConverter() 
+	cv := halftone.NewImageConverter()
 	for _, file := range files {
 		var img, err = worker.LoadImage(file)
 
-        if err != nil {
-            log.Fatal(err) 
-        }
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		var gray = cv.ConvertToGray(img)
 		var dithered *image.Gray
@@ -47,7 +46,7 @@ func main() {
 			dithered = halftone.NewThresholdDitherer(122).Run(gray)
 		default:
 			fmt.Println("wrong dither mode specified. Only 0, 1 and 2 supported")
-			os.Exit(1) 
+			os.Exit(1)
 		}
 
 		// Save as out.png
